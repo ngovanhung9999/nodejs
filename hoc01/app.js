@@ -1,16 +1,23 @@
 const http = require('http');
-const fs = require('fs');
+const url = require('url')
+    //
+const config = require('./modules/config');
+const helper = require('./modules/helper');
 
-const config = require('./module/config');
 
 http.createServer(function(req, res) {
-    fs.readFile('./Home.html', (err, data) => {
-        if (err) {
-            res.writeHead(404);
-            res.write('file not found !');
-        } else {
-            res.write(data);
-        }
-        res.end();
-    });
+    const path = url.parse(req.url).pathname;
+    switch (path) {
+        case '/':
+        case '/Home':
+            helper.renderHTML('./views/Home.html', res);
+            break;
+        case '/About':
+            helper.renderHTML('./views/About.html', res);
+            break
+        default:
+            helper.render404(res);
+            res.end();
+            break;
+    }
 }).listen(config.post);
